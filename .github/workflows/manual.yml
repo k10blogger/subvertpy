@@ -134,9 +134,6 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -U pip coverage codecov flake8 fastimport
-    - name: Style checks
-      run: |
-        python -m flake8
     - name: Build (Linux)
       run: |
         python setup.py build_ext -i
