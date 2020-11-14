@@ -90,6 +90,9 @@ jobs:
         }
       shell: pwsh
       if: "matrix.os == 'windows-latest'"
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.0.2
+      if: "matrix.os == 'windows-latest'"
     - name: Install serf (Windows)
       run: |
         curl -L https://downloads.apache.org/serf/serf-1.3.9.zip -o serf.zip
@@ -100,9 +103,6 @@ jobs:
         python2 ./scons.py --debug=stacktrace
       if: "matrix.os == 'windows-latest'"
       continue-on-error: true
-    - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v1.0.2
-      if: "matrix.os == 'windows-latest'"
     - name: Install Subversion (Windows)
       run: |
         curl -L https://downloads.apache.org/subversion/subversion-${{ matrix.svn-version }}.zip -o subversion.zip
@@ -111,7 +111,7 @@ jobs:
         cp $env:VCPKG_INSTALLATION_ROOT/packages/expat_x64-windows/include/* $env:VCPKG_INSTALLATION_ROOT/packages/apr-util_x64-windows/include
         cp $env:VCPKG_INSTALLATION_ROOT/packages/expat_x64-windows/lib/* $env:VCPKG_INSTALLATION_ROOT/packages/apr-util_x64-windows/lib
         cp $env:VCPKG_INSTALLATION_ROOT/packages/expat_x64-windows/bin/* $env:VCPKG_INSTALLATION_ROOT/packages/apr-util_x64-windows/bin
-        python2 gen-make.py --debug --vsnet-version=2019 --with-apr=$env:VCPKG_INSTALLATION_ROOT/packages/apr_x64-windows --with-apr-util=$env:VCPKG_INSTALLATION_ROOT/packages/apr-util_x64-windows --with-zlib=$env:VCPKG_INSTALLATION_ROOT/packages/zlib_x64-windows --with-sqlite=$env:VCPKG_INSTALLATION_ROOT/packages/sqlite3_x64-windows
+        python gen-make.py --debug --vsnet-version=2019 --with-apr=$env:VCPKG_INSTALLATION_ROOT/packages/apr_x64-windows --with-apr-util=$env:VCPKG_INSTALLATION_ROOT/packages/apr-util_x64-windows --with-zlib=$env:VCPKG_INSTALLATION_ROOT/packages/zlib_x64-windows --with-sqlite=$env:VCPKG_INSTALLATION_ROOT/packages/sqlite3_x64-windows
         msbuild subversion_vcnet.sln /t:__MORE__ /p:Configuration=Release
         Copy-Item -Recurse -Path $env:GITHUB_WORKSPACE/subversion-${{ matrix.svn-version }}/subversion/include -Destination $env:VCPKG_INSTALLATION_ROOT/installed/x64-windows/include/subversion-1
         Get-ChildItem -Path "$env:GITHUB_WORKSPACE/subversion-${{ matrix.svn-version }}/Release/subversion/libsvn_*/*" -Recurse | Copy-Item -Destination "$env:VCPKG_INSTALLATION_ROOT/installed/x64-windows/lib"
